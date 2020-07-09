@@ -1,0 +1,9 @@
+---
+title: "Chapter 1"
+output: html_notebook
+---
+
+```{r setup}
+knitr::opts_knit$set(root.dir = '~/Documents/Linear-Model-using-R')
+```
+
