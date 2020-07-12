@@ -14,9 +14,76 @@ knitr::opts_knit$set(root.dir = '~/Documents/Linear-Model-using-R')
 ## 1.2 Initial Data Analysis
 
 ```{r}
-install.packages("faraway")
+# install.packages("faraway")
 library(faraway)
 ```
+### import the dataset and have a first look at it
+
+```{r}
+# import the dataset called `pima` from the package
+data(pima, package="faraway")
+head(pima)
+```
+
+```{r}
+# alternative way to import data
+# makes all data and functions that are included in the package available
+require(faraway)
+head(pima)
+```
+
+### make numerical summaries
+
+At this stage, we are looking for anything unusual or unexpected
+e.g. data-entry error
+
+```{r}
+# obtain numerical summaries
+# summary function gives the usual univariate summary information 
+summary(pima)
+```
+
+We first look at the maximum value in variable `pregnant`: 17 months is not impossible although highly unlikely. 
+
+The 0 values in `diastolic` should not be correct as it means no blood pressure. (During the data analysis part, we need to have basic domain knowledge on the area or some common sense) So, we need to further investigate the variable by sorting them:
+
+```{r}
+sort(pima$diastolic)
+```
+
+From the data, it is obvious that 35 entries have value 0, which probably indicates that these 0s are used to indicate missing values. If we don't change the correct form for these missing values, these values may affect the analysis. So, we can convert these 0s to NA inferring that these values are missing.
+
+Thus, we set all 0s in `diastolic`, `glucose`, `triceps`, `insulin` and `bmi` to NA.
+
+```{r}
+# convert all the 0 values in 5 variables to NA
+pima$diastolic[pima$diastolic==0] <- NA
+pima$glucose[pima$glucose == 0] <- NA
+pima$triceps[pima$triceps == 0] <- NA
+pima$insulin[pima$insulin == 0] <- NA
+pima$bmi[pima$bmi == 0] <- NA
+```
+
+Variable `test` is a categorical variable which means it is a `factor` variable.
+
+```{r}
+# convert the `test` variable to a factor variable; otherwise, this variable will be treated as a 
+# quantitative variable
+pima$test <- factor(pima$test)
+# give a summary table for test variable
+summary(pima$test)
+```
+
+We can convert the labels for factor variables to descriptive ones:
+
+```{r}
+#convert the levels of `test` variable to descriptive labels
+levels(pima$test) <- c("negative","positive")
+summary(pima)
+```
+
+### graphic descriptions
+
 
 
 ## 1.3 When to use linear models

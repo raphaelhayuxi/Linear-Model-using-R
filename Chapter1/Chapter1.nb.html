@@ -1478,13 +1478,13 @@ window.initializeCodeFolding = function(show) {
   var currentIndex = 1;
 
   // select all R code blocks
-  var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan, pre.julia');
+  var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan, pre.julia, pre.foldable');
   rCodeBlocks.each(function() {
 
     // create a collapsable div to wrap the code in
     var div = $('<div class="collapse r-code-collapse"></div>');
-    if (show || $(this)[0].classList.contains('fold-show'))
-      div.addClass('in');
+    show = (show || $(this).hasClass('fold-show')) && !$(this).hasClass('fold-hide');
+    if (show) div.addClass('in');
     var id = 'rcode-643E0F36' + currentIndex++;
     div.attr('id', id);
     $(this).before(div);
@@ -1752,7 +1752,7 @@ summary {
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua25pdHI6Om9wdHNfa25pdCRzZXQocm9vdC5kaXIgPSAnfi9Eb2N1bWVudHMvTGluZWFyLU1vZGVsLXVzaW5nLVInKVxuYGBgIn0= -->
-<pre class="r"><code>knitr::opts_knit$set(root.dir = '~/Documents/Linear-Model-using-R')</code></pre>
+<pre class="r"><code>knitr::opts_knit$set(root.dir = &#39;~/Documents/Linear-Model-using-R&#39;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1765,25 +1765,181 @@ summary {
 <h2>1.2 Initial Data Analysis</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW5zdGFsbC5wYWNrYWdlcyhcImZhcmF3YXlcIilcbmBgYCJ9 -->
-<pre class="r"><code>install.packages(&quot;faraway&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoidHJ5aW5nIFVSTCAnaHR0cHM6Ly9jcmFuLnJzdHVkaW8uY29tL2Jpbi9tYWNvc3gvZWwtY2FwaXRhbi9jb250cmliLzMuNi9mYXJhd2F5XzEuMC43LnRneidcbkNvbnRlbnQgdHlwZSAnYXBwbGljYXRpb24veC1nemlwJyBsZW5ndGggODAyNTI5IGJ5dGVzICg3ODMgS0IpXG49PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuZG93bmxvYWRlZCA3ODMgS0JcbiJ9 -->
-<pre><code>trying URL 'https://cran.rstudio.com/bin/macosx/el-capitan/contrib/3.6/faraway_1.0.7.tgz'
-Content type 'application/x-gzip' length 802529 bytes (783 KB)
-==================================================
-downloaded 783 KB</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5UaGUgZG93bmxvYWRlZCBiaW5hcnkgcGFja2FnZXMgYXJlIGluXG5cdC92YXIvZm9sZGVycy8wZi8zbTF2Z2NyZDFmNWc1dmxqZjNwd3dfZzgwMDAwZ24vVC8vUnRtcHZUWnQ4ai9kb3dubG9hZGVkX3BhY2thZ2VzXG4ifQ== -->
-<pre><code>
-The downloaded binary packages are in
-    /var/folders/0f/3m1vgcrd1f5g5vljf3pww_g80000gn/T//RtmpvTZt8j/downloaded_packages</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShmYXJhd2F5KVxuYGBgIn0= -->
-<pre class="r"><code>library(faraway)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBpbnN0YWxsLnBhY2thZ2VzKFwiZmFyYXdheVwiKVxubGlicmFyeShmYXJhd2F5KVxuYGBgIn0= -->
+<pre class="r"><code># install.packages(&quot;faraway&quot;)
+library(faraway)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<div id="import-the-dataset-and-have-a-first-look-at-it" class="section level3">
+<h3>import the dataset and have a first look at it</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBpbXBvcnQgdGhlIGRhdGFzZXQgY2FsbGVkIGBwaW1hYCBmcm9tIHRoZSBwYWNrYWdlXG5kYXRhKHBpbWEsIHBhY2thZ2U9XCJmYXJhd2F5XCIpXG5oZWFkKHBpbWEpXG5gYGAifQ== -->
+<pre class="r"><code># import the dataset called `pima` from the package
+data(pima, package=&quot;faraway&quot;)
+head(pima)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6OX0sInJkZiI6Ikg0c0lBQUFBQUFBQUExMVNRVXZjUUJTZUpKdG9BdFVGa1ZLa2F0RkRMNXRTVjJzVkliRllrZHBlUkdHOVNMUFpOQjBhSnlHWnRCNjhlQlI2N0tYK0F0dHpRZkJldEZBdlBmVFdtOFZib2VlQzlpV1pKMk1HUHViNzNqZnZ6Y3liV1Z2cXRLMk9SUWpSaUdZQWRLQkUzMWhmYmowbXBLR0NVRWlEbU1XOEE0dUdnQlRpRnNBUVVBRDlZaTZ6SmY4RFlBTndCTmdFN0FPNDVLOEFuZ0JjTWQ4SFBKUDhDY0JkVWZlMjBFVHk1YkVGT0JSOG9QQmQ5M3N4enR6NWo4VTRjR2VmVjNyaFRxV2Z2cS8wWE9Wam5uUGU3TDc0OGZlejgvUHQ2WmU1VHRQNXZXZE0vbm93NG54OXViZy91M3JpcXVCKytuZmhmRHZlbW5GMi8wam5tUUtNQWNZQnc0QjdnRkhKeHg3VjVodU4xcG0zSFdSQW1tV3pxMkIva2dZaDh4Z1h1aStNY2ovT0FpSE5IdlV5SGtmVVI1K24xQStTRENWbFdSNVJKcVRXM2FaWUdESzdBUTl3cGVhRldMUUJVVjQ3bkpuRzcyejVnQVorajRkSXBwQzBrVXdqbVVIeXFINW5QL0l5TElsQnErZHh6MzZWd202Z0xtc3BmWEhDYWN3Z1NSMFN2MDVPVnRKYVlEQm54Ymw3TGY5MXp0NjAyc1VHNGdVVThVS0tlQ1hrWnJXbGVpVks2YUtVRWJDUU1teVRIa0VESXlFR29EOWxlK3drcGRldlpVRTBzM25NUFZ4bitYR0VrZkp1NVBJL0UrVXFQb3dEQUFBPSJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["pregnant"],"name":[1],"type":["int"],"align":["right"]},{"label":["glucose"],"name":[2],"type":["int"],"align":["right"]},{"label":["diastolic"],"name":[3],"type":["int"],"align":["right"]},{"label":["triceps"],"name":[4],"type":["int"],"align":["right"]},{"label":["insulin"],"name":[5],"type":["int"],"align":["right"]},{"label":["bmi"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["diabetes"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["age"],"name":[8],"type":["int"],"align":["right"]},{"label":["test"],"name":[9],"type":["int"],"align":["right"]}],"data":[{"1":"6","2":"148","3":"72","4":"35","5":"0","6":"33.6","7":"0.627","8":"50","9":"1","_rn_":"1"},{"1":"1","2":"85","3":"66","4":"29","5":"0","6":"26.6","7":"0.351","8":"31","9":"0","_rn_":"2"},{"1":"8","2":"183","3":"64","4":"0","5":"0","6":"23.3","7":"0.672","8":"32","9":"1","_rn_":"3"},{"1":"1","2":"89","3":"66","4":"23","5":"94","6":"28.1","7":"0.167","8":"21","9":"0","_rn_":"4"},{"1":"0","2":"137","3":"40","4":"35","5":"168","6":"43.1","7":"2.288","8":"33","9":"1","_rn_":"5"},{"1":"5","2":"116","3":"74","4":"0","5":"0","6":"25.6","7":"0.201","8":"30","9":"0","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10],"total":[9]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBhbHRlcm5hdGl2ZSB3YXkgdG8gaW1wb3J0IGRhdGFcbiMgbWFrZXMgYWxsIGRhdGEgYW5kIGZ1bmN0aW9ucyB0aGF0IGFyZSBpbmNsdWRlZCBpbiB0aGUgcGFja2FnZSBhdmFpbGFibGVcbnJlcXVpcmUoZmFyYXdheSlcbmhlYWQocGltYSlcbmBgYCJ9 -->
+<pre class="r"><code># alternative way to import data
+# makes all data and functions that are included in the package available
+require(faraway)
+head(pima)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6OX0sInJkZiI6Ikg0c0lBQUFBQUFBQUF3dHlpVERtaXVCaVlHQmdabUJtQTJKV0lKT0JOVFRFVGRlQ2dZR0ZDY2hoWkdCaDRBVFJGVUJGd2tBR2lNTUx4R3hRekFqRUhGQWFyQnRKZmdvUWh3THhkaUNPQk9KT0lDNUJrdmNBWWljZ2RvRFNHa0RzaFNTdkRNU3lVSFBGb1h3R0pIbGtFQWZFSzZCc1BwQzhnOE1aRURqcllEVVRCR1k1bVB0QStEYVNFTDVyRDRSdkNaR0g2Yk4vSXBEa2UrbmpLdnRyWlNlMldFWUkyRDl0WkZPNXF5OXRmelRCc2RQYys3Z0RFMUIyNWUvbjlpZDN4Wm5hMTd4RGNvOFJFTXNEc1FJUWl3S3hJaERMSWNuRHdnaU5SZ2xvMXJ6RTNOUmlJRU1BSE5nUVFZNkNvdFQwdk1TOEVpaWZQVDJuTkRtL09CWEs1VXpKVEN3dXljL0pUSWJKbHhSbEpxY1dGTU80bVhuRnBUbVplVkF1YzFKdUpzeGdvTTZrMUpKVW1Fcm14SFNZb1N4QTBSSTB4M0VXNVpmcklUdVFEWlk4REdFTUl4akRHTVl3Z1RGTVlRd3pkRDhuNXlRV3c0eUVDWEtsSkpZazZxVVZBVzBEOHY2aGFXSFBMeWpKek04RGFtSVNocVk2Wk0yTVJXZ0MvS1Y1SUhlbjZDWm5sT1psNjVxQUxJREdBQ00waGhpaHNRUmpjMEtzWlBvUE5Zb1ZhaFJiYWw1NlpoNHNtRmh6Z0FHWUErWHdBY01ISER4NkJVV1o4TmppQW9vVzY1WGtseVRDMUhFbDUrZkFSTUIrWS9nSEFMd053YzJNQXdBQSJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["pregnant"],"name":[1],"type":["int"],"align":["right"]},{"label":["glucose"],"name":[2],"type":["int"],"align":["right"]},{"label":["diastolic"],"name":[3],"type":["int"],"align":["right"]},{"label":["triceps"],"name":[4],"type":["int"],"align":["right"]},{"label":["insulin"],"name":[5],"type":["int"],"align":["right"]},{"label":["bmi"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["diabetes"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["age"],"name":[8],"type":["int"],"align":["right"]},{"label":["test"],"name":[9],"type":["int"],"align":["right"]}],"data":[{"1":"6","2":"148","3":"72","4":"35","5":"0","6":"33.6","7":"0.627","8":"50","9":"1","_rn_":"1"},{"1":"1","2":"85","3":"66","4":"29","5":"0","6":"26.6","7":"0.351","8":"31","9":"0","_rn_":"2"},{"1":"8","2":"183","3":"64","4":"0","5":"0","6":"23.3","7":"0.672","8":"32","9":"1","_rn_":"3"},{"1":"1","2":"89","3":"66","4":"23","5":"94","6":"28.1","7":"0.167","8":"21","9":"0","_rn_":"4"},{"1":"0","2":"137","3":"40","4":"35","5":"168","6":"43.1","7":"2.288","8":"33","9":"1","_rn_":"5"},{"1":"5","2":"116","3":"74","4":"0","5":"0","6":"25.6","7":"0.201","8":"30","9":"0","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10],"total":[9]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="make-numerical-summaries" class="section level3">
+<h3>make numerical summaries</h3>
+<p>At this stage, we are looking for anything unusual or unexpected e.g. data-entry error</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBvYnRhaW4gbnVtZXJpY2FsIHN1bW1hcmllc1xuIyBzdW1tYXJ5IGZ1bmN0aW9uIGdpdmVzIHRoZSB1c3VhbCB1bml2YXJpYXRlIHN1bW1hcnkgaW5mb3JtYXRpb24gXG5zdW1tYXJ5KHBpbWEpXG5gYGAifQ== -->
+<pre class="r"><code># obtain numerical summaries
+# summary function gives the usual univariate summary information 
+summary(pima)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgIHByZWduYW50ICAgICAgICAgZ2x1Y29zZSAgICAgICAgZGlhc3RvbGljICAgICAgICAgdHJpY2VwcyAgICAgICAgIGluc3VsaW4gICAgICAgICAgIGJtaSAgICAgICBcbiBNaW4uICAgOiAwLjAwMCAgIE1pbi4gICA6ICAwLjAgICBNaW4uICAgOiAgMC4wMCAgIE1pbi4gICA6IDAuMDAgICBNaW4uICAgOiAgMC4wICAgTWluLiAgIDogMC4wMCAgXG4gMXN0IFF1LjogMS4wMDAgICAxc3QgUXUuOiA5OS4wICAgMXN0IFF1LjogNjIuMDAgICAxc3QgUXUuOiAwLjAwICAgMXN0IFF1LjogIDAuMCAgIDFzdCBRdS46MjcuMzAgIFxuIE1lZGlhbiA6IDMuMDAwICAgTWVkaWFuIDoxMTcuMCAgIE1lZGlhbiA6IDcyLjAwICAgTWVkaWFuIDoyMy4wMCAgIE1lZGlhbiA6IDMwLjUgICBNZWRpYW4gOjMyLjAwICBcbiBNZWFuICAgOiAzLjg0NSAgIE1lYW4gICA6MTIwLjkgICBNZWFuICAgOiA2OS4xMSAgIE1lYW4gICA6MjAuNTQgICBNZWFuICAgOiA3OS44ICAgTWVhbiAgIDozMS45OSAgXG4gM3JkIFF1LjogNi4wMDAgICAzcmQgUXUuOjE0MC4yICAgM3JkIFF1LjogODAuMDAgICAzcmQgUXUuOjMyLjAwICAgM3JkIFF1LjoxMjcuMiAgIDNyZCBRdS46MzYuNjAgIFxuIE1heC4gICA6MTcuMDAwICAgTWF4LiAgIDoxOTkuMCAgIE1heC4gICA6MTIyLjAwICAgTWF4LiAgIDo5OS4wMCAgIE1heC4gICA6ODQ2LjAgICBNYXguICAgOjY3LjEwICBcbiAgICBkaWFiZXRlcyAgICAgICAgICAgYWdlICAgICAgICAgICAgIHRlc3QgICAgICBcbiBNaW4uICAgOjAuMDc4MCAgIE1pbi4gICA6MjEuMDAgICBNaW4uICAgOjAuMDAwICBcbiAxc3QgUXUuOjAuMjQzNyAgIDFzdCBRdS46MjQuMDAgICAxc3QgUXUuOjAuMDAwICBcbiBNZWRpYW4gOjAuMzcyNSAgIE1lZGlhbiA6MjkuMDAgICBNZWRpYW4gOjAuMDAwICBcbiBNZWFuICAgOjAuNDcxOSAgIE1lYW4gICA6MzMuMjQgICBNZWFuICAgOjAuMzQ5ICBcbiAzcmQgUXUuOjAuNjI2MiAgIDNyZCBRdS46NDEuMDAgICAzcmQgUXUuOjEuMDAwICBcbiBNYXguICAgOjIuNDIwMCAgIE1heC4gICA6ODEuMDAgICBNYXguICAgOjEuMDAwICBcbiJ9 -->
+<pre><code>    pregnant         glucose        diastolic         triceps         insulin           bmi       
+ Min.   : 0.000   Min.   :  0.0   Min.   :  0.00   Min.   : 0.00   Min.   :  0.0   Min.   : 0.00  
+ 1st Qu.: 1.000   1st Qu.: 99.0   1st Qu.: 62.00   1st Qu.: 0.00   1st Qu.:  0.0   1st Qu.:27.30  
+ Median : 3.000   Median :117.0   Median : 72.00   Median :23.00   Median : 30.5   Median :32.00  
+ Mean   : 3.845   Mean   :120.9   Mean   : 69.11   Mean   :20.54   Mean   : 79.8   Mean   :31.99  
+ 3rd Qu.: 6.000   3rd Qu.:140.2   3rd Qu.: 80.00   3rd Qu.:32.00   3rd Qu.:127.2   3rd Qu.:36.60  
+ Max.   :17.000   Max.   :199.0   Max.   :122.00   Max.   :99.00   Max.   :846.0   Max.   :67.10  
+    diabetes           age             test      
+ Min.   :0.0780   Min.   :21.00   Min.   :0.000  
+ 1st Qu.:0.2437   1st Qu.:24.00   1st Qu.:0.000  
+ Median :0.3725   Median :29.00   Median :0.000  
+ Mean   :0.4719   Mean   :33.24   Mean   :0.349  
+ 3rd Qu.:0.6262   3rd Qu.:41.00   3rd Qu.:1.000  
+ Max.   :2.4200   Max.   :81.00   Max.   :1.000  </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We first look at the maximum value in variable <code>pregnant</code>: 17 months is not impossible although highly unlikely.</p>
+<p>The 0 values in <code>diastolic</code> should not be correct as it means no blood pressure. (During the data analysis part, we need to have basic domain knowledge on the area or some common sense) So, we need to further investigate the variable by sorting them:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc29ydChwaW1hJGRpYXN0b2xpYylcbmBgYCJ9 -->
+<pre class="r"><code>sort(pima$diastolic)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICBbMV0gICAwICAgMCAgIDAgICAwICAgMCAgIDAgICAwICAgMCAgIDAgICAwICAgMCAgIDAgICAwICAgMCAgIDAgICAwICAgMCAgIDAgICAwICAgMCAgIDAgICAwICAgMFxuIFsyNF0gICAwICAgMCAgIDAgICAwICAgMCAgIDAgICAwICAgMCAgIDAgICAwICAgMCAgIDAgIDI0ICAzMCAgMzAgIDM4ICA0MCAgNDQgIDQ0ICA0NCAgNDQgIDQ2ICA0NlxuIFs0N10gIDQ4ICA0OCAgNDggIDQ4ICA0OCAgNTAgIDUwICA1MCAgNTAgIDUwICA1MCAgNTAgIDUwICA1MCAgNTAgIDUwICA1MCAgNTAgIDUyICA1MiAgNTIgIDUyICA1MlxuIFs3MF0gIDUyICA1MiAgNTIgIDUyICA1MiAgNTIgIDU0ICA1NCAgNTQgIDU0ICA1NCAgNTQgIDU0ICA1NCAgNTQgIDU0ICA1NCAgNTUgIDU1ICA1NiAgNTYgIDU2ICA1NlxuIFs5M10gIDU2ICA1NiAgNTYgIDU2ICA1NiAgNTYgIDU2ICA1NiAgNTggIDU4ICA1OCAgNTggIDU4ICA1OCAgNTggIDU4ICA1OCAgNTggIDU4ICA1OCAgNTggIDU4ICA1OFxuWzExNl0gIDU4ICA1OCAgNTggIDU4ICA1OCAgNTggIDYwICA2MCAgNjAgIDYwICA2MCAgNjAgIDYwICA2MCAgNjAgIDYwICA2MCAgNjAgIDYwICA2MCAgNjAgIDYwICA2MFxuWzEzOV0gIDYwICA2MCAgNjAgIDYwICA2MCAgNjAgIDYwICA2MCAgNjAgIDYwICA2MCAgNjAgIDYwICA2MCAgNjAgIDYwICA2MCAgNjAgIDYwICA2MCAgNjEgIDYyICA2MlxuWzE2Ml0gIDYyICA2MiAgNjIgIDYyICA2MiAgNjIgIDYyICA2MiAgNjIgIDYyICA2MiAgNjIgIDYyICA2MiAgNjIgIDYyICA2MiAgNjIgIDYyICA2MiAgNjIgIDYyICA2MlxuWzE4NV0gIDYyICA2MiAgNjIgIDYyICA2MiAgNjIgIDYyICA2MiAgNjIgIDY0ICA2NCAgNjQgIDY0ICA2NCAgNjQgIDY0ICA2NCAgNjQgIDY0ICA2NCAgNjQgIDY0ICA2NFxuWzIwOF0gIDY0ICA2NCAgNjQgIDY0ICA2NCAgNjQgIDY0ICA2NCAgNjQgIDY0ICA2NCAgNjQgIDY0ICA2NCAgNjQgIDY0ICA2NCAgNjQgIDY0ICA2NCAgNjQgIDY0ICA2NFxuWzIzMV0gIDY0ICA2NCAgNjQgIDY0ICA2NCAgNjQgIDY1ICA2NSAgNjUgIDY1ICA2NSAgNjUgIDY1ICA2NiAgNjYgIDY2ICA2NiAgNjYgIDY2ICA2NiAgNjYgIDY2ICA2NlxuWzI1NF0gIDY2ICA2NiAgNjYgIDY2ICA2NiAgNjYgIDY2ICA2NiAgNjYgIDY2ICA2NiAgNjYgIDY2ICA2NiAgNjYgIDY2ICA2NiAgNjYgIDY2ICA2NiAgNjggIDY4ICA2OFxuWzI3N10gIDY4ICA2OCAgNjggIDY4ICA2OCAgNjggIDY4ICA2OCAgNjggIDY4ICA2OCAgNjggIDY4ICA2OCAgNjggIDY4ICA2OCAgNjggIDY4ICA2OCAgNjggIDY4ICA2OFxuWzMwMF0gIDY4ICA2OCAgNjggIDY4ICA2OCAgNjggIDY4ICA2OCAgNjggIDY4ICA2OCAgNjggIDY4ICA2OCAgNjggIDY4ICA2OCAgNjggIDY4ICA3MCAgNzAgIDcwICA3MFxuWzMyM10gIDcwICA3MCAgNzAgIDcwICA3MCAgNzAgIDcwICA3MCAgNzAgIDcwICA3MCAgNzAgIDcwICA3MCAgNzAgIDcwICA3MCAgNzAgIDcwICA3MCAgNzAgIDcwICA3MFxuWzM0Nl0gIDcwICA3MCAgNzAgIDcwICA3MCAgNzAgIDcwICA3MCAgNzAgIDcwICA3MCAgNzAgIDcwICA3MCAgNzAgIDcwICA3MCAgNzAgIDcwICA3MCAgNzAgIDcwICA3MFxuWzM2OV0gIDcwICA3MCAgNzAgIDcwICA3MCAgNzAgIDcwICA3MiAgNzIgIDcyICA3MiAgNzIgIDcyICA3MiAgNzIgIDcyICA3MiAgNzIgIDcyICA3MiAgNzIgIDcyICA3MlxuWzM5Ml0gIDcyICA3MiAgNzIgIDcyICA3MiAgNzIgIDcyICA3MiAgNzIgIDcyICA3MiAgNzIgIDcyICA3MiAgNzIgIDcyICA3MiAgNzIgIDcyICA3MiAgNzIgIDcyICA3MlxuWzQxNV0gIDcyICA3MiAgNzIgIDcyICA3MiAgNzQgIDc0ICA3NCAgNzQgIDc0ICA3NCAgNzQgIDc0ICA3NCAgNzQgIDc0ICA3NCAgNzQgIDc0ICA3NCAgNzQgIDc0ICA3NFxuWzQzOF0gIDc0ICA3NCAgNzQgIDc0ICA3NCAgNzQgIDc0ICA3NCAgNzQgIDc0ICA3NCAgNzQgIDc0ICA3NCAgNzQgIDc0ICA3NCAgNzQgIDc0ICA3NCAgNzQgIDc0ICA3NFxuWzQ2MV0gIDc0ICA3NCAgNzQgIDc0ICA3NCAgNzQgIDc0ICA3NCAgNzQgIDc0ICA3NCAgNzUgIDc1ICA3NSAgNzUgIDc1ICA3NSAgNzUgIDc1ICA3NiAgNzYgIDc2ICA3NlxuWzQ4NF0gIDc2ICA3NiAgNzYgIDc2ICA3NiAgNzYgIDc2ICA3NiAgNzYgIDc2ICA3NiAgNzYgIDc2ICA3NiAgNzYgIDc2ICA3NiAgNzYgIDc2ICA3NiAgNzYgIDc2ICA3NlxuWzUwN10gIDc2ICA3NiAgNzYgIDc2ICA3NiAgNzYgIDc2ICA3NiAgNzYgIDc2ICA3NiAgNzYgIDc4ICA3OCAgNzggIDc4ICA3OCAgNzggIDc4ICA3OCAgNzggIDc4ICA3OFxuWzUzMF0gIDc4ICA3OCAgNzggIDc4ICA3OCAgNzggIDc4ICA3OCAgNzggIDc4ICA3OCAgNzggIDc4ICA3OCAgNzggIDc4ICA3OCAgNzggIDc4ICA3OCAgNzggIDc4ICA3OFxuWzU1M10gIDc4ICA3OCAgNzggIDc4ICA3OCAgNzggIDc4ICA3OCAgNzggIDc4ICA3OCAgODAgIDgwICA4MCAgODAgIDgwICA4MCAgODAgIDgwICA4MCAgODAgIDgwICA4MFxuWzU3Nl0gIDgwICA4MCAgODAgIDgwICA4MCAgODAgIDgwICA4MCAgODAgIDgwICA4MCAgODAgIDgwICA4MCAgODAgIDgwICA4MCAgODAgIDgwICA4MCAgODAgIDgwICA4MFxuWzU5OV0gIDgwICA4MCAgODAgIDgwICA4MCAgODIgIDgyICA4MiAgODIgIDgyICA4MiAgODIgIDgyICA4MiAgODIgIDgyICA4MiAgODIgIDgyICA4MiAgODIgIDgyICA4MlxuWzYyMl0gIDgyICA4MiAgODIgIDgyICA4MiAgODIgIDgyICA4MiAgODIgIDgyICA4MiAgODIgIDg0ICA4NCAgODQgIDg0ICA4NCAgODQgIDg0ICA4NCAgODQgIDg0ICA4NFxuWzY0NV0gIDg0ICA4NCAgODQgIDg0ICA4NCAgODQgIDg0ICA4NCAgODQgIDg0ICA4NCAgODQgIDg1ICA4NSAgODUgIDg1ICA4NSAgODUgIDg2ICA4NiAgODYgIDg2ICA4NlxuWzY2OF0gIDg2ICA4NiAgODYgIDg2ICA4NiAgODYgIDg2ICA4NiAgODYgIDg2ICA4NiAgODYgIDg2ICA4NiAgODYgIDg2ICA4OCAgODggIDg4ICA4OCAgODggIDg4ICA4OFxuWzY5MV0gIDg4ICA4OCAgODggIDg4ICA4OCAgODggIDg4ICA4OCAgODggIDg4ICA4OCAgODggIDg4ICA4OCAgODggIDg4ICA4OCAgODggIDkwICA5MCAgOTAgIDkwICA5MFxuWzcxNF0gIDkwICA5MCAgOTAgIDkwICA5MCAgOTAgIDkwICA5MCAgOTAgIDkwICA5MCAgOTAgIDkwICA5MCAgOTAgIDkwICA5MCAgOTIgIDkyICA5MiAgOTIgIDkyICA5MlxuWzczN10gIDkyICA5MiAgOTQgIDk0ICA5NCAgOTQgIDk0ICA5NCAgOTUgIDk2ICA5NiAgOTYgIDk2ICA5OCAgOTggIDk4IDEwMCAxMDAgMTAwIDEwMiAxMDQgMTA0IDEwNlxuWzc2MF0gMTA2IDEwNiAxMDggMTA4IDExMCAxMTAgMTEwIDExNCAxMjJcbiJ9 -->
+<pre><code>  [1]   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+ [24]   0   0   0   0   0   0   0   0   0   0   0   0  24  30  30  38  40  44  44  44  44  46  46
+ [47]  48  48  48  48  48  50  50  50  50  50  50  50  50  50  50  50  50  50  52  52  52  52  52
+ [70]  52  52  52  52  52  52  54  54  54  54  54  54  54  54  54  54  54  55  55  56  56  56  56
+ [93]  56  56  56  56  56  56  56  56  58  58  58  58  58  58  58  58  58  58  58  58  58  58  58
+[116]  58  58  58  58  58  58  60  60  60  60  60  60  60  60  60  60  60  60  60  60  60  60  60
+[139]  60  60  60  60  60  60  60  60  60  60  60  60  60  60  60  60  60  60  60  60  61  62  62
+[162]  62  62  62  62  62  62  62  62  62  62  62  62  62  62  62  62  62  62  62  62  62  62  62
+[185]  62  62  62  62  62  62  62  62  62  64  64  64  64  64  64  64  64  64  64  64  64  64  64
+[208]  64  64  64  64  64  64  64  64  64  64  64  64  64  64  64  64  64  64  64  64  64  64  64
+[231]  64  64  64  64  64  64  65  65  65  65  65  65  65  66  66  66  66  66  66  66  66  66  66
+[254]  66  66  66  66  66  66  66  66  66  66  66  66  66  66  66  66  66  66  66  66  68  68  68
+[277]  68  68  68  68  68  68  68  68  68  68  68  68  68  68  68  68  68  68  68  68  68  68  68
+[300]  68  68  68  68  68  68  68  68  68  68  68  68  68  68  68  68  68  68  68  70  70  70  70
+[323]  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70
+[346]  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70  70
+[369]  70  70  70  70  70  70  70  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72
+[392]  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72
+[415]  72  72  72  72  72  74  74  74  74  74  74  74  74  74  74  74  74  74  74  74  74  74  74
+[438]  74  74  74  74  74  74  74  74  74  74  74  74  74  74  74  74  74  74  74  74  74  74  74
+[461]  74  74  74  74  74  74  74  74  74  74  74  75  75  75  75  75  75  75  75  76  76  76  76
+[484]  76  76  76  76  76  76  76  76  76  76  76  76  76  76  76  76  76  76  76  76  76  76  76
+[507]  76  76  76  76  76  76  76  76  76  76  76  76  78  78  78  78  78  78  78  78  78  78  78
+[530]  78  78  78  78  78  78  78  78  78  78  78  78  78  78  78  78  78  78  78  78  78  78  78
+[553]  78  78  78  78  78  78  78  78  78  78  78  80  80  80  80  80  80  80  80  80  80  80  80
+[576]  80  80  80  80  80  80  80  80  80  80  80  80  80  80  80  80  80  80  80  80  80  80  80
+[599]  80  80  80  80  80  82  82  82  82  82  82  82  82  82  82  82  82  82  82  82  82  82  82
+[622]  82  82  82  82  82  82  82  82  82  82  82  82  84  84  84  84  84  84  84  84  84  84  84
+[645]  84  84  84  84  84  84  84  84  84  84  84  84  85  85  85  85  85  85  86  86  86  86  86
+[668]  86  86  86  86  86  86  86  86  86  86  86  86  86  86  86  86  88  88  88  88  88  88  88
+[691]  88  88  88  88  88  88  88  88  88  88  88  88  88  88  88  88  88  88  90  90  90  90  90
+[714]  90  90  90  90  90  90  90  90  90  90  90  90  90  90  90  90  90  92  92  92  92  92  92
+[737]  92  92  94  94  94  94  94  94  95  96  96  96  96  98  98  98 100 100 100 102 104 104 106
+[760] 106 106 108 108 110 110 110 114 122</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>From the data, it is obvious that 35 entries have value 0, which probably indicates that these 0s are used to indicate missing values. If we don’t change the correct form for these missing values, these values may affect the analysis. So, we can convert these 0s to NA inferring that these values are missing.</p>
+<p>Thus, we set all 0s in <code>diastolic</code>, <code>glucose</code>, <code>triceps</code>, <code>insulin</code> and <code>bmi</code> to NA.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGltYSRkaWFzdG9saWNbcGltYSRkaWFzdG9saWM9PTBdIDwtIE5BXG5waW1hJGdsdWNvc2VbcGltYSRnbHVjb3NlID09IDBdIDwtIE5BXG5waW1hJHRyaWNlcHNbcGltYSR0cmljZXBzID09IDBdIDwtIE5BXG5waW1hJGluc3VsaW5bcGltYSRpbnN1bGluID09IDBdIDwtIE5BXG5waW1hJGJtaVtwaW1hJGJtaSA9PSAwXSA8LSBOQVxuYGBgIn0= -->
+<pre class="r"><code>pima$diastolic[pima$diastolic==0] &lt;- NA
+pima$glucose[pima$glucose == 0] &lt;- NA
+pima$triceps[pima$triceps == 0] &lt;- NA
+pima$insulin[pima$insulin == 0] &lt;- NA
+pima$bmi[pima$bmi == 0] &lt;- NA</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Variable <code>test</code> is a categorical variable which means it is a <code>factor</code> variable.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb252ZXJ0IHRoZSBgdGVzdGAgdmFyaWFibGUgdG8gYSBmYWN0b3IgdmFyaWFibGU7IG90aGVyd2lzZSwgdGhpcyB2YXJpYWJsZSB3aWxsIGJlIHRyZWF0ZWQgYXMgYSBcbiMgcXVhbnRpdGF0aXZlIHZhcmlhYmxlXG5waW1hJHRlc3QgPC0gZmFjdG9yKHBpbWEkdGVzdClcbiMgZ2l2ZSBhIHN1bW1hcnkgdGFibGUgZm9yIHRlc3QgdmFyaWFibGVcbnN1bW1hcnkocGltYSR0ZXN0KVxuYGBgIn0= -->
+<pre class="r"><code># convert the `test` variable to a factor variable; otherwise, this variable will be treated as a 
+# quantitative variable
+pima$test &lt;- factor(pima$test)
+# give a summary table for test variable
+summary(pima$test)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAwICAgMSBcbjUwMCAyNjggXG4ifQ== -->
+<pre><code>  0   1 
+500 268 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We can convert the labels for factor variables to descriptive ones:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGV2ZWxzKHBpbWEkdGVzdCkgPC0gYyhcIm5lZ2F0aXZlXCIsXCJwb3NpdGl2ZVwiKVxuc3VtbWFyeShwaW1hKVxuYGBgIn0= -->
+<pre class="r"><code>levels(pima$test) &lt;- c(&quot;negative&quot;,&quot;positive&quot;)
+summary(pima)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgIHByZWduYW50ICAgICAgICAgZ2x1Y29zZSAgICAgICAgZGlhc3RvbGljICAgICAgICAgdHJpY2VwcyAgICAgICAgIGluc3VsaW4gICAgICAgICAgICBibWkgICAgICAgXG4gTWluLiAgIDogMC4wMDAgICBNaW4uICAgOiA0NC4wICAgTWluLiAgIDogMjQuMDAgICBNaW4uICAgOiA3LjAwICAgTWluLiAgIDogMTQuMDAgICBNaW4uICAgOjE4LjIwICBcbiAxc3QgUXUuOiAxLjAwMCAgIDFzdCBRdS46IDk5LjAgICAxc3QgUXUuOiA2NC4wMCAgIDFzdCBRdS46MjIuMDAgICAxc3QgUXUuOiA3Ni4yNSAgIDFzdCBRdS46MjcuNTAgIFxuIE1lZGlhbiA6IDMuMDAwICAgTWVkaWFuIDoxMTcuMCAgIE1lZGlhbiA6IDcyLjAwICAgTWVkaWFuIDoyOS4wMCAgIE1lZGlhbiA6MTI1LjAwICAgTWVkaWFuIDozMi4zMCAgXG4gTWVhbiAgIDogMy44NDUgICBNZWFuICAgOjEyMS43ICAgTWVhbiAgIDogNzIuNDEgICBNZWFuICAgOjI5LjE1ICAgTWVhbiAgIDoxNTUuNTUgICBNZWFuICAgOjMyLjQ2ICBcbiAzcmQgUXUuOiA2LjAwMCAgIDNyZCBRdS46MTQxLjAgICAzcmQgUXUuOiA4MC4wMCAgIDNyZCBRdS46MzYuMDAgICAzcmQgUXUuOjE5MC4wMCAgIDNyZCBRdS46MzYuNjAgIFxuIE1heC4gICA6MTcuMDAwICAgTWF4LiAgIDoxOTkuMCAgIE1heC4gICA6MTIyLjAwICAgTWF4LiAgIDo5OS4wMCAgIE1heC4gICA6ODQ2LjAwICAgTWF4LiAgIDo2Ny4xMCAgXG4gICAgICAgICAgICAgICAgICBOQSdzICAgOjUgICAgICAgTkEncyAgIDozNSAgICAgICBOQSdzICAgOjIyNyAgICAgTkEncyAgIDozNzQgICAgICBOQSdzICAgOjExICAgICBcbiAgICBkaWFiZXRlcyAgICAgICAgICAgYWdlICAgICAgICAgICAgICB0ZXN0ICAgIFxuIE1pbi4gICA6MC4wNzgwICAgTWluLiAgIDoyMS4wMCAgIG5lZ2F0aXZlOjUwMCAgXG4gMXN0IFF1LjowLjI0MzcgICAxc3QgUXUuOjI0LjAwICAgcG9zaXRpdmU6MjY4ICBcbiBNZWRpYW4gOjAuMzcyNSAgIE1lZGlhbiA6MjkuMDAgICAgICAgICAgICAgICAgIFxuIE1lYW4gICA6MC40NzE5ICAgTWVhbiAgIDozMy4yNCAgICAgICAgICAgICAgICAgXG4gM3JkIFF1LjowLjYyNjIgICAzcmQgUXUuOjQxLjAwICAgICAgICAgICAgICAgICBcbiBNYXguICAgOjIuNDIwMCAgIE1heC4gICA6ODEuMDAgICAgICAgICAgICAgICAgIFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXG4ifQ== -->
+<pre><code>    pregnant         glucose        diastolic         triceps         insulin            bmi       
+ Min.   : 0.000   Min.   : 44.0   Min.   : 24.00   Min.   : 7.00   Min.   : 14.00   Min.   :18.20  
+ 1st Qu.: 1.000   1st Qu.: 99.0   1st Qu.: 64.00   1st Qu.:22.00   1st Qu.: 76.25   1st Qu.:27.50  
+ Median : 3.000   Median :117.0   Median : 72.00   Median :29.00   Median :125.00   Median :32.30  
+ Mean   : 3.845   Mean   :121.7   Mean   : 72.41   Mean   :29.15   Mean   :155.55   Mean   :32.46  
+ 3rd Qu.: 6.000   3rd Qu.:141.0   3rd Qu.: 80.00   3rd Qu.:36.00   3rd Qu.:190.00   3rd Qu.:36.60  
+ Max.   :17.000   Max.   :199.0   Max.   :122.00   Max.   :99.00   Max.   :846.00   Max.   :67.10  
+                  NA&#39;s   :5       NA&#39;s   :35       NA&#39;s   :227     NA&#39;s   :374      NA&#39;s   :11     
+    diabetes           age              test    
+ Min.   :0.0780   Min.   :21.00   negative:500  
+ 1st Qu.:0.2437   1st Qu.:24.00   positive:268  
+ Median :0.3725   Median :29.00                 
+ Mean   :0.4719   Mean   :33.24                 
+ 3rd Qu.:0.6262   3rd Qu.:41.00                 
+ Max.   :2.4200   Max.   :81.00                 
+                                                </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="graphic-descriptions" class="section level3">
+<h3>graphic descriptions</h3>
+</div>
 </div>
 <div id="when-to-use-linear-models" class="section level2">
 <h2>1.3 When to use linear models</h2>
@@ -1797,7 +1953,7 @@ The downloaded binary packages are in
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiQ2hhcHRlciAxIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgpgYGB7ciBzZXR1cH0Ka25pdHI6Om9wdHNfa25pdCRzZXQocm9vdC5kaXIgPSAnfi9Eb2N1bWVudHMvTGluZWFyLU1vZGVsLXVzaW5nLVInKQpgYGAKCiMgQ2hhcHRlciAxIEludHJvZHVjdGlvbiAKCiMjIDEuMSBCZWZvcmUgeW91IHN0YXJ0CgojIyAxLjIgSW5pdGlhbCBEYXRhIEFuYWx5c2lzCgpgYGB7cn0KaW5zdGFsbC5wYWNrYWdlcygiZmFyYXdheSIpCmxpYnJhcnkoZmFyYXdheSkKYGBgCgoKIyMgMS4zIFdoZW4gdG8gdXNlIGxpbmVhciBtb2RlbHMKCiMjIDEuNCBIaXN0b3J5CgojIyBFeGVyY2lzZXMKCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiQ2hhcHRlciAxIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgpgYGB7ciBzZXR1cH0Ka25pdHI6Om9wdHNfa25pdCRzZXQocm9vdC5kaXIgPSAnfi9Eb2N1bWVudHMvTGluZWFyLU1vZGVsLXVzaW5nLVInKQpgYGAKCiMgQ2hhcHRlciAxIEludHJvZHVjdGlvbiAKCiMjIDEuMSBCZWZvcmUgeW91IHN0YXJ0CgojIyAxLjIgSW5pdGlhbCBEYXRhIEFuYWx5c2lzCgpgYGB7cn0KIyBpbnN0YWxsLnBhY2thZ2VzKCJmYXJhd2F5IikKbGlicmFyeShmYXJhd2F5KQpgYGAKIyMjIGltcG9ydCB0aGUgZGF0YXNldCBhbmQgaGF2ZSBhIGZpcnN0IGxvb2sgYXQgaXQKCmBgYHtyfQojIGltcG9ydCB0aGUgZGF0YXNldCBjYWxsZWQgYHBpbWFgIGZyb20gdGhlIHBhY2thZ2UKZGF0YShwaW1hLCBwYWNrYWdlPSJmYXJhd2F5IikKaGVhZChwaW1hKQpgYGAKCmBgYHtyfQojIGFsdGVybmF0aXZlIHdheSB0byBpbXBvcnQgZGF0YQojIG1ha2VzIGFsbCBkYXRhIGFuZCBmdW5jdGlvbnMgdGhhdCBhcmUgaW5jbHVkZWQgaW4gdGhlIHBhY2thZ2UgYXZhaWxhYmxlCnJlcXVpcmUoZmFyYXdheSkKaGVhZChwaW1hKQpgYGAKCiMjIyBtYWtlIG51bWVyaWNhbCBzdW1tYXJpZXMKCkF0IHRoaXMgc3RhZ2UsIHdlIGFyZSBsb29raW5nIGZvciBhbnl0aGluZyB1bnVzdWFsIG9yIHVuZXhwZWN0ZWQKZS5nLiBkYXRhLWVudHJ5IGVycm9yCgpgYGB7cn0KIyBvYnRhaW4gbnVtZXJpY2FsIHN1bW1hcmllcwojIHN1bW1hcnkgZnVuY3Rpb24gZ2l2ZXMgdGhlIHVzdWFsIHVuaXZhcmlhdGUgc3VtbWFyeSBpbmZvcm1hdGlvbiAKc3VtbWFyeShwaW1hKQpgYGAKCldlIGZpcnN0IGxvb2sgYXQgdGhlIG1heGltdW0gdmFsdWUgaW4gdmFyaWFibGUgYHByZWduYW50YDogMTcgbW9udGhzIGlzIG5vdCBpbXBvc3NpYmxlIGFsdGhvdWdoIGhpZ2hseSB1bmxpa2VseS4gCgpUaGUgMCB2YWx1ZXMgaW4gYGRpYXN0b2xpY2Agc2hvdWxkIG5vdCBiZSBjb3JyZWN0IGFzIGl0IG1lYW5zIG5vIGJsb29kIHByZXNzdXJlLiAoRHVyaW5nIHRoZSBkYXRhIGFuYWx5c2lzIHBhcnQsIHdlIG5lZWQgdG8gaGF2ZSBiYXNpYyBkb21haW4ga25vd2xlZGdlIG9uIHRoZSBhcmVhIG9yIHNvbWUgY29tbW9uIHNlbnNlKSBTbywgd2UgbmVlZCB0byBmdXJ0aGVyIGludmVzdGlnYXRlIHRoZSB2YXJpYWJsZSBieSBzb3J0aW5nIHRoZW06CgpgYGB7cn0Kc29ydChwaW1hJGRpYXN0b2xpYykKYGBgCgpGcm9tIHRoZSBkYXRhLCBpdCBpcyBvYnZpb3VzIHRoYXQgMzUgZW50cmllcyBoYXZlIHZhbHVlIDAsIHdoaWNoIHByb2JhYmx5IGluZGljYXRlcyB0aGF0IHRoZXNlIDBzIGFyZSB1c2VkIHRvIGluZGljYXRlIG1pc3NpbmcgdmFsdWVzLiBJZiB3ZSBkb24ndCBjaGFuZ2UgdGhlIGNvcnJlY3QgZm9ybSBmb3IgdGhlc2UgbWlzc2luZyB2YWx1ZXMsIHRoZXNlIHZhbHVlcyBtYXkgYWZmZWN0IHRoZSBhbmFseXNpcy4gU28sIHdlIGNhbiBjb252ZXJ0IHRoZXNlIDBzIHRvIE5BIGluZmVycmluZyB0aGF0IHRoZXNlIHZhbHVlcyBhcmUgbWlzc2luZy4KClRodXMsIHdlIHNldCBhbGwgMHMgaW4gYGRpYXN0b2xpY2AsIGBnbHVjb3NlYCwgYHRyaWNlcHNgLCBgaW5zdWxpbmAgYW5kIGBibWlgIHRvIE5BLgoKYGBge3J9CiMgY29udmVydCBhbGwgdGhlIDAgdmFsdWVzIGluIDUgdmFyaWFibGVzIHRvIE5BCnBpbWEkZGlhc3RvbGljW3BpbWEkZGlhc3RvbGljPT0wXSA8LSBOQQpwaW1hJGdsdWNvc2VbcGltYSRnbHVjb3NlID09IDBdIDwtIE5BCnBpbWEkdHJpY2Vwc1twaW1hJHRyaWNlcHMgPT0gMF0gPC0gTkEKcGltYSRpbnN1bGluW3BpbWEkaW5zdWxpbiA9PSAwXSA8LSBOQQpwaW1hJGJtaVtwaW1hJGJtaSA9PSAwXSA8LSBOQQpgYGAKClZhcmlhYmxlIGB0ZXN0YCBpcyBhIGNhdGVnb3JpY2FsIHZhcmlhYmxlIHdoaWNoIG1lYW5zIGl0IGlzIGEgYGZhY3RvcmAgdmFyaWFibGUuCgpgYGB7cn0KIyBjb252ZXJ0IHRoZSBgdGVzdGAgdmFyaWFibGUgdG8gYSBmYWN0b3IgdmFyaWFibGU7IG90aGVyd2lzZSwgdGhpcyB2YXJpYWJsZSB3aWxsIGJlIHRyZWF0ZWQgYXMgYSAKIyBxdWFudGl0YXRpdmUgdmFyaWFibGUKcGltYSR0ZXN0IDwtIGZhY3RvcihwaW1hJHRlc3QpCiMgZ2l2ZSBhIHN1bW1hcnkgdGFibGUgZm9yIHRlc3QgdmFyaWFibGUKc3VtbWFyeShwaW1hJHRlc3QpCmBgYAoKV2UgY2FuIGNvbnZlcnQgdGhlIGxhYmVscyBmb3IgZmFjdG9yIHZhcmlhYmxlcyB0byBkZXNjcmlwdGl2ZSBvbmVzOgoKYGBge3J9CiNjb252ZXJ0IHRoZSBsZXZlbHMgb2YgYHRlc3RgIHZhcmlhYmxlIHRvIGRlc2NyaXB0aXZlIGxhYmVscwpsZXZlbHMocGltYSR0ZXN0KSA8LSBjKCJuZWdhdGl2ZSIsInBvc2l0aXZlIikKc3VtbWFyeShwaW1hKQpgYGAKCiMjIyBncmFwaGljIGRlc2NyaXB0aW9ucwoKCgojIyAxLjMgV2hlbiB0byB1c2UgbGluZWFyIG1vZGVscwoKIyMgMS40IEhpc3RvcnkKCiMjIEV4ZXJjaXNlcwoK</div>
 
 
 
