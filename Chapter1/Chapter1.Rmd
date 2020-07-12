@@ -84,6 +84,49 @@ summary(pima)
 
 ### graphic descriptions
 
+```{r}
+#histogram with bins specified by r
+hist(pima$diastolic, xlab="diastolic",main="")
+```
+
+```{r}
+# kernel estimate(density plot) of histogram
+plot(density(pima$diastolic, na.rm = T),main="")
+```
+
+```{r}
+plot(sort(pima$diastolic),ylab="Sorted Diastolic")
+```
+
+```{r}
+# plot a scatterplot for diabetes against diastolic with the dataset pima
+plot(diabetes~diastolic,pima)
+```
+
+```{r}
+# plot two boxplots for diabetes against both positive and negative cases
+plot(diabetes~test,pima)
+```
+
+```{r}
+# install.packages("ggplot2")
+require(ggplot2)
+```
+
+```{r}
+# histogram
+ggplot(pima, aes(x=diastolic))+geom_histogram()
+```
+
+```{r}
+# kernel estimate(density plot)
+ggplot(pima, aes(x=diastolic))+geom_density()
+```
+
+```{r}
+# scatterplot
+ggplot(pima, aes(x=diastolic,y=diabetes))+geom_point()
+```
 
 
 ## 1.3 When to use linear models
