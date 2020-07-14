@@ -128,6 +128,29 @@ ggplot(pima, aes(x=diastolic))+geom_density()
 ggplot(pima, aes(x=diastolic,y=diabetes))+geom_point()
 ```
 
+#### explanation of `ggplot`
+
+`ggplot(<dataset_name>, aes(x = <x_axis>, y = <y_axis>, colour=<colour_name>, ...))+ <geo_plots()>+theme()+facet_grid()`
+
+ggplot arguments:
+    - dataset
+    - aesthetic: specify x-axis, y-axis, shape of points, colour of graph, etc
+    - geom_plots: different sorts of plots
+    - theme: specify options on apperance of the plot
+    - facet_grid: form a matrix of panels defined by row and column faceting variables
+
+```{r}
+# scatterplot with a legend on the top
+ggplot(pima, aes(x=diastolic, y=diabetes, shape=test))+geom_point()+
+    theme(legend.position="top", legend.direction="horizontal")
+```
+
+```{r}
+# shape in aes function change the shape of points based on the values of test variable
+ggplot(pima, aes(x=diastolic, y=diabetes, shape=test))+geom_point(size=1)+facet_grid(~test)
+```
+
+
 
 ## 1.3 When to use linear models
 
