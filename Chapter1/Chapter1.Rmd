@@ -150,11 +150,46 @@ ggplot(pima, aes(x=diastolic, y=diabetes, shape=test))+geom_point()+
 ggplot(pima, aes(x=diastolic, y=diabetes, shape=test))+geom_point(size=1)+facet_grid(~test)
 ```
 
-
-
 ## 1.3 When to use linear models
 
+Regression analysis have two main objectives:
+
+1. prediction of future or unseen response given specified values of predictors.
+
+2. Assessment of the effect of, or relations between, predictors and responses. If possible, we want to infer casual relationships.
+
 ## 1.4 History
+
+### Use linear regression to find coefficients in physical science
+
+```{r}
+data(manilius, package="faraway")
+head(manilius)
+```
+
+```{r}
+lm1 <- lm(arc~sinang+cosang,data=manilius)
+lm1$coef
+```
+
+### Use of linear regression to find coefficients in social science
+
+```{r}
+data(GaltonFamilies, package = "HistData")
+head(GaltonFamilies)
+```
+
+```{r}
+plot(childHeight~midparentHeight, GaltonFamilies)
+```
+
+```{r}
+lm2 <- lm(childHeight~GaltonFamilies$midparentHeight,data=GaltonFamilies)
+coef(lm2)
+plot(childHeight~midparentHeight, GaltonFamilies)
+abline(lm2)
+```
+
 
 ## Exercises
 
