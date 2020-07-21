@@ -193,3 +193,100 @@ abline(lm2)
 
 ## Exercises
 
+###1 
+
+```{r}
+data("teengamb", package="faraway")
+head(teengamb)
+```
+
+##### numerical summary
+
+```{r}
+summary(teengamb)
+```
+
+```{r}
+table(teengamb$sex)
+```
+
+
+#### graphical summary
+
+```{r}
+par(mfrow=c(2,2))
+plot(teengamb$sex,teengamb$gamble)
+plot(teengamb$status,teengamb$gamble)
+plot(teengamb$income,teengamb$gamble)
+plot(teengamb$verbal,teengamb$gamble)
+```
+
+```{r}
+par(mfrow=c(2,2))
+hist(teengamb$sex)
+hist(teengamb$status)
+plot(density(teengamb$income))
+hist(teengamb$verbal)
+```
+
+### 2
+
+```{r}
+data("uswages",package="faraway")
+head(uswages)
+```
+
+#### numerical summary
+
+```{r}
+summary(uswages)
+```
+
+```{r}
+# convert quatitative variables into qualitative
+uswages$race <- factor(uswages$race)
+uswages$smsa <- factor(uswages$smsa)
+uswages$ne <- factor(uswages$ne)
+uswages$mw <- factor(uswages$mw)
+uswages$we <- factor(uswages$we)
+uswages$so <- factor(uswages$so)
+uswages$pt <- factor(uswages$pt)
+uswages$educ <- factor(uswages$educ)
+levels(uswages$race) <- c("White","Black")
+levels(uswages$pt) <- c("full-time","part-time")
+```
+
+```{r}
+summary(uswages)
+```
+
+```{r}
+# summarise variable `ne`, `mw`, `we`, `so` into one variable `location`
+uswages$location[uswages$ne==1] <- "North East"
+uswages$location[uswages$mw==1] <- "Midwest"
+uswages$location[uswages$we==1] <- "West"
+uswages$location[uswages$so==1] <- "South"
+uswages$location <- factor(uswages$location)
+# levels(uswages$location) <- c("North East","Midwest","West","South")
+# uswages$location
+```
+
+```{r}
+# sort(uswages$exper)
+uswages$exper[uswages$exper<0] <- NA
+sort(uswages$exper)
+```
+
+```{r}
+summary(uswages)
+```
+
+#### graphical summary
+
+```{r}
+# par(mfrow=c(2,2))
+plot(uswages$location, uswages$wage)
+plot(uswages$educ, uswages$wage)
+plot(uswages$race, uswages$wage)
+plot(uswages$pt, uswages$wage)
+```
